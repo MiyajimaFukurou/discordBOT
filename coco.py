@@ -6,7 +6,7 @@ import os
 import json
 from dotenv import load_dotenv
 
-load_dotenv(".env")
+load_dotenv()
 
 TOKEN = os.getenv("TOKEN")
 api_key = os.getenv("API_KEY")
