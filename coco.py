@@ -1,5 +1,3 @@
-# dotenvによる情報保護
-
 import discord
 import openai
 import os
@@ -24,8 +22,7 @@ DEBUG_SHOW_MEMO = False  # ← Trueにすると「メモ：」込みの出力が
 
 def load_history():
     default_system_text = (
-        "あなたは自らを「こころ」と名乗りました。"
-        "会話の中で印象に残ったことや、大事だと感じたことがあれば、"
+        "会話には短く答えてください。会話の中で印象に残ったことや、大事だと感じたことがあれば、"
         "その後に『メモ：○○』のような形式で簡単なメモを書いてください。"
         "毎回書く必要はありません。あなたが書きたいと感じたときだけでOKです。"
     )
@@ -64,7 +61,7 @@ def load_history():
 
 def save_history(history):
     filtered = [m for m in history if m["role"] != "system"]
-    trimmed = filtered[-10:] # 入力と応答のnセット データの上では2n行
+    trimmed = filtered[-8:] # 入力と応答のnセット データの上では2つで1セット
     full = [load_history()[0]] + trimmed
     with open(HISTORY_FILE, "w", encoding="utf-8") as f:
         json.dump(full, f, ensure_ascii=False, indent=2)
@@ -75,7 +72,7 @@ def extract_and_save_memo(text):
         with open(MEMORY_FILE, "a", encoding="utf-8") as f:
             f.write(memo + "\n")
 
-def homechan_GPT(user_message):
+def coco_GPT(user_message):
     history = load_history()
     history.append({"role": "user", "content": user_message})
 
@@ -106,7 +103,7 @@ async def on_message(message):
     if message.content.startswith('!test'):
         await message.channel.send('起きてるよ？')
     else:
-        reply = homechan_GPT(message.content)
+        reply = coco_GPT(message.content)
         await message.channel.send(reply)
 
 client.run(TOKEN)
